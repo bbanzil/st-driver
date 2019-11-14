@@ -82,36 +82,30 @@ def parse(String description) {
             curtainLevel = floatValue.intValue()
             log.debug "level => ${curtainLevel}"
             
-            if(parseMap.raw.endsWith("00000000") || parseMap["size"] =="16") { //&& parseMap["size"] == "28") {    
-
-            } else if (parseMap.raw.endsWith("00000000") || parseMap["size"] == "1C") {               
-                if (curtainLevel == 100) {
-                    log.debug "Just Fully Open"
-                    windowShadeStatus = "open"
-                    curtainLevel = 100
-                } else if (curtainLevel > 0) {
-                    log.debug curtainLevel + '% Partially Open'
-                    windowShadeStatus = "partially open"
-                    curtainLevel = curtainLevel
-                } else {
-                    log.debug "Just Closed"
-                    windowShadeStatus = "closed"
-                    curtainLevel = 0
-                }
-
-                def eventStack = []
-
-                if (parseMap.additionalAttrs[0].value.startsWith("03")) {  //A68E00
-                    eventStack.push(createEvent(name: "windowShade", value: windowShadeStatus as String))
-                }
-                
-                //eventStack.push(createEvent(name:"windowShade", value: windowShadeStatus as String))
-                eventStack.push(createEvent(name:"level", value: curtainLevel))
-                eventStack.push(createEvent(name:"switch", value: (windowShadeStatus == "closed" ? "off" : "on")))
-                return eventStack                
+            if (curtainLevel == 100) {
+                log.debug "Just Fully Open"
+                windowShadeStatus = "open"
+                curtainLevel = 100
+            } else if (curtainLevel > 0) {
+                log.debug curtainLevel + '% Partially Open'
+                windowShadeStatus = "partially open"
+                curtainLevel = curtainLevel
             } else {
-                log.debug "running…"
+                log.debug "Just Closed"
+                windowShadeStatus = "closed"
+                curtainLevel = 0
             }
+
+            def eventStack = []
+
+            if (parseMap.additionalAttrs[0].value.startsWith("03")) {  //A68E00
+                eventStack.push(createEvent(name: "windowShade", value: windowShadeStatus as String))
+            }
+            
+            //eventStack.push(createEvent(name:"windowShade", value: windowShadeStatus as String))
+            eventStack.push(createEvent(name:"level", value: curtainLevel))
+            eventStack.push(createEvent(name:"switch", value: (windowShadeStatus == "closed" ? "off" : "on")))
+            return eventStack                
         } else if (parseMap["clusterId"] == "0102"){
             if (parseMap["attrId"] == "0008") {
                 long endValue = Long.parseLong(parseMap["value"], 16)
