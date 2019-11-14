@@ -98,7 +98,7 @@ def parse(String description) {
 
             def eventStack = []
 
-            if (parseMap.additionalAttrs[0].value.startsWith("03")) {  //A68E00
+            if (parseMap.additionalAttrs != null && parseMap.additionalAttrs[0].value.startsWith("03")) {  //A68E00
                 eventStack.push(createEvent(name: "windowShade", value: windowShadeStatus as String))
             }
             
