@@ -84,7 +84,7 @@ def parse(String description) {
                 //log.debug "long => ${theValue}, float => ${floatValue}"
                 curtainLevel = floatValue.intValue()
                 log.debug "level => ${curtainLevel}"
-            } else (parseMap.raw.endsWith("00000000") || parseMap["size"] == "1C") {
+            } else if (parseMap.raw.endsWith("00000000") || parseMap["size"] == "1C") {
                 if (curtainLevel == 100) {
                     log.debug "Just Fully Open"
                     windowShadeStatus = "open"
