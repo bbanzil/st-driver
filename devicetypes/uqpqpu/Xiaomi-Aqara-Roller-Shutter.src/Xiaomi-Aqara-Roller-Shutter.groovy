@@ -12,7 +12,7 @@
  */
 
 metadata {
-    definition(name: "Xiaomi Aqara Roller Shutter ", namespace: "ShinJjang", author: "ShinJjang", ocfDeviceType: "oic.d.blind") {
+    definition(name: "Xiaomi Aqara Roller Shutter", namespace: "ShinJjang", author: "ShinJjang", ocfDeviceType: "oic.d.blind") {
         capability "Window Shade"
 //      capability "Window Shade Preset"
         capability "Switch Level"
@@ -79,12 +79,12 @@ def parse(String description) {
         if (parseMap["cluster"] == "000D" && parseMap["attrId"] == "0055") {
             long theValue = Long.parseLong(parseMap["value"], 16)
             float floatValue = Float.intBitsToFloat(theValue.intValue());
-
+            curtainLevel = floatValue.intValue()
+            log.debug "level => ${curtainLevel}"
+            
             if(parseMap.raw.endsWith("00000000") || parseMap["size"] =="16") { //&& parseMap["size"] == "28") {    
-                //log.debug "long => ${theValue}, float => ${floatValue}"
-                curtainLevel = floatValue.intValue()
-                log.debug "level => ${curtainLevel}"
-            } else if (parseMap.raw.endsWith("00000000") || parseMap["size"] == "1C") {
+
+            } else if (parseMap.raw.endsWith("00000000") || parseMap["size"] == "1C") {               
                 if (curtainLevel == 100) {
                     log.debug "Just Fully Open"
                     windowShadeStatus = "open"
@@ -121,20 +121,9 @@ def parse(String description) {
                 log.debug "stopped"
             }
         } else if (parseMap["clusterId"] == "0000" && parseMap["encoding"] == "42") {
-            /*
-            def valueData = parseMap["value"]
-            def eventStack = []
-            def position = valueData[36,37];
-            //log.debug "check position = ${position}"
-            String hexposition = position
-            long endValue = Long.parseLong(hexposition, 16)
-            curtainLevel = endValue
-            log.debug "check position = ${position}, check Level = ${curtainLevel}"
-            */
+
         } else if (parseMap.raw.startsWith("0104")) {
             log.debug "Xiaomi Curtain"
-            runIn(20, checkP)
-          //  log.debug "Unhandled Event - description:${description}, parseMap:${parseMap}, event:${event}"
         } else if (parseMap.raw.endsWith("0007")) {
             log.debug "Unhandled Event - description:${description}, parseMap:${parseMap}, event:${event}"
         }
@@ -183,6 +172,7 @@ def setLevel(level) {
     }
 
     String hex = Integer.toHexString(Float.floatToIntBits(level)).toUpperCase()
+    log.debug "set pose: ${hex}"
     if (level == 100) {
         log.info "open()"
         zigbee.writeAttribute(0x000d, 0x0055, 0x39, hex)
@@ -191,7 +181,7 @@ def setLevel(level) {
         zigbee.writeAttribute(0x000d, 0x0055, 0x39, hex)
     } else {
         log.info "close()"
-        zigbee.writeAttribute(0x000d, 0x0055, 0x39, hex)
+        zigbee.writeAttribute(0x000d, 0x0055, 0x39, 00000000)
     } 
 }
 
@@ -201,5 +191,5 @@ def ping() {
 
 def refresh() {
     log.debug "refresh()"
-     zigbee.readAttribute(0x000d, 0x0055)
+    zigbee.readAttribute(0x000d, 0x0055)
 }
