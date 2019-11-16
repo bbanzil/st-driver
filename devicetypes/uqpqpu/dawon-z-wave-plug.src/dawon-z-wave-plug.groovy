@@ -12,7 +12,7 @@
  *
  */
 metadata {
-    definition (name: "Dawon Z-Wave Plug 2", namespace: "uqpqpu", author: "uqpqpu", ocfDeviceType: "oic.d.switch", runLocally: false, minHubCoreVersion: '000.017.0012', executeCommandsLocally: false, genericHandler: "Z-Wave") { 
+    definition (name: "Dawon Z-Wave Plug", namespace: "uqpqpu", author: "uqpqpu", ocfDeviceType: "oic.d.switch", runLocally: false, minHubCoreVersion: '000.017.0012', executeCommandsLocally: false, genericHandler: "Z-Wave") { 
         capability "Energy Meter"
         capability "Actuator"
         capability "Switch"
